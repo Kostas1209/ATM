@@ -6,7 +6,7 @@ class BankomatRepositorieFunctions:
     def UpdateMoneyAmount( BillName, BillAmount):
         arguments = (BillAmount,BillName)
         if BillAmount > 0:
-            MakeNoteToActions ("Инкасация")
+            BankomatRepositorieFunctions.MakeNoteToActions ("Инкасация")
         MyCursor.execute("Update Money Set AmountOfBill = AmountOfBill + %s Where NameOfBill = %s",arguments)
         MySQLConnection.commit()
 

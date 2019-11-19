@@ -42,6 +42,7 @@ class FinancialServiceFunctions:
         
         FinancialServiceFunctions.TakeMoneyFromBankomat(WithdrawSum)
         UserRepositorieFunctions.UpdateUserMoney(-1 * WithdrawSum, CurrentUser)
+        CurrentUser.AmountOfMoney -= WithdrawSum
         BankomatRepositorieFunctions.MakeNoteToActions("На аккаунте {} снято {}".format(CurrentUser.NumberOfAccount,WithdrawSum))
 
         return 

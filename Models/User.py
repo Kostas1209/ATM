@@ -38,6 +38,10 @@ class User :
     def AmountOfMoney(self):
         return self.__AmountOfMoney
 
+    @AmountOfMoney.setter
+    def AmountOfMoney(self,value):
+        self.__AmountOfMoney = value
+
 
 
 
