@@ -1,7 +1,6 @@
 from Repositories.BankomatRepositorie import BankomatRepositorieFunctions
 from Repositories.UserRepositorie import UserRepositorieFunctions
 from Models.User import User
-from Decorators.Decorators import CheckPasswordDecorator
 import Exceptions.CustomExceptions as Excp
 
 class FinancialServiceFunctions:
@@ -23,32 +22,31 @@ class FinancialServiceFunctions:
         if AmountOfBillGivenUser > 20:
             raise Excp.BigSum("sum is so big more than 20 bills")
         if WithdrawSum > 0:
-            raise Excp.NotHaveBill("We can`t give you this sum")
+            raise Excp.NotHaveBill("We can`t give you this amount")
         print(result)
         for Key ,value in result.items():
             BankomatRepositorieFunctions.UpdateMoneyAmount(Key, -1*value)
-        print("Заберите ваши деньги")
 
         return 
 
-    @CheckPasswordDecorator
     def WithdrawMoney(CurrentUser : User ):
         print("How many you want to withdraw?")
         WithdrawSum = int( input() )
 
         if WithdrawSum > CurrentUser.AmountOfMoney:
-            BankomatRepositorieFunctions.MakeNoteToActions("Попытка снятия денег на счёте {}".format(CurrentUser.NumberOfAccount))
+            BankomatRepositorieFunctions.MakeNoteToActions("Attempt to take money in account {}".format(CurrentUser.NumberOfAccount))
             raise Excp.NotEnoughtMoney("Not Enough money in the account")
         
         FinancialServiceFunctions.TakeMoneyFromBankomat(WithdrawSum)
         UserRepositorieFunctions.UpdateUserMoney(-1 * WithdrawSum, CurrentUser)
         CurrentUser.AmountOfMoney -= WithdrawSum
-        BankomatRepositorieFunctions.MakeNoteToActions("На аккаунте {} снято {}".format(CurrentUser.NumberOfAccount,WithdrawSum))
+        BankomatRepositorieFunctions.MakeNoteToActions("In account {} withdrawn {}".format(CurrentUser.NumberOfAccount,WithdrawSum))
 
         return 
 
     def BillAdding(RecevedBill : dict):
-
+        BankomatRepositorieFunctions.MakeNoteToActions ("Adding money")
         for Key, value in RecevedBill.items():
             BankomatRepositorieFunctions.UpdateMoneyAmount(Key,value)
         return
+

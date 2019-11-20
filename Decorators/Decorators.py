@@ -1,31 +1,24 @@
-from Models.User import User
+from Models.Session import Session
 from Repositories.UserRepositorie import UserRepositorieFunctions
 from Repositories.BankomatRepositorie import BankomatRepositorieFunctions
 import Exceptions.CustomExceptions as Excp
 
-def CheckPasswordDecorator( func ): 
-    def Function(CurrentUser : User):
-        counter = 3
-        while True:
-            if counter <= 0:
-                UserRepositorieFunctions.BlockAccount(CurrentUser.NumberOfAccount)
-                BankomatRepositorieFunctions.MakeNoteToActions("Account {} is blocked for 1 minute ".format(CurrentUser.NumberOfAccount))
-                raise Excp.BlockAccount("Account is blocked for 1 minute")
-                break
-            print("Enter the password")
-            try:
-                EnterPassword = int( input() )
-            except:
-                counter -= 1
-                print("Password is wrong")
-                continue
+def CheckSessionDecorator(func ): 
+    def Function(CurrentSession : Session,f):
+        if CurrentSession.SessionUser.Pin == CurrentSession.EnterPin:
+           CurrentSession.SessionUser.AmountIncorrectPassword = 0
+           UserRepositorieFunctions.UpdateUserIncorrectPassword(CurrentSession.SessionUser, 0)
+           func(CurrentSession,f)
+           return 
 
-            if CurrentUser.Pin == EnterPassword:
-                func(CurrentUser)
-                break
-            else:
-                counter -= 1
-                print("Password is wrong")
+        else:
+           UserRepositorieFunctions.UpdateUserIncorrectPassword(CurrentSession.SessionUser, CurrentSession.SessionUser.AmountIncorrectPassword + 1)
+           CurrentSession.SessionUser.AmountIncorrectPassword += 1
 
+        if CurrentSession.SessionUser.AmountIncorrectPassword >= 3:
+           UserRepositorieFunctions.UpdateUserIncorrectPassword(CurrentSession.SessionUser, 0)
+           raise Excp.BlockAccount("Account have been blocked")
+        else: 
+           raise Excp.WrongPassword("Password is wrong")
 
     return Function

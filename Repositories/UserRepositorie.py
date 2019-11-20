@@ -4,6 +4,11 @@ import Exceptions.CustomExceptions as Excep
 
 
 class UserRepositorieFunctions:
+    def UpdateUserIncorrectPassword(CurrentUser : User, value : int ):
+        arguments = (value, CurrentUser.NumberOfAccount)
+        MyCursor.execute("Update accounts Set PasswordEnteredIncorrectly = %s Where AccountNumber = %s",arguments)
+        MySQLConnection.commit()
+
     def UpdateUserMoney(WithdrawSum : int, CurrentUser : User):
         arguments = (WithdrawSum, CurrentUser.NumberOfAccount)
         MyCursor.execute("Update accounts Set Money = Money + %s Where AccountNumber = %s",arguments)
@@ -23,15 +28,15 @@ class UserRepositorieFunctions:
         if UserRepositorieFunctions.IsAccountBlocked(NumberOfAccount) == True:
             raise Excep.AccountIsBlocked("Account is blocked")
         NumberOfAccount = (NumberOfAccount,)
-        MyCursor.execute("SELECT AccountNumber,CardNumber, Pin, Money FROM accounts WHERE accountnumber = %s ",NumberOfAccount)
+        MyCursor.execute("SELECT AccountNumber,CardNumber, Pin, Money,PasswordEnteredIncorrectly FROM accounts WHERE accountnumber = %s ",NumberOfAccount)
         accountInfo = MyCursor.fetchone() ## Account information 
         MyCursor.execute("""SELECT Name , SurName From users 
                             Where id IN ( Select Id From accounts Where AccountNumber = %s);""" ,NumberOfAccount)
         if accountInfo == None:
-            raise Excep.NotFoundAccount("Данный номер счёта не найден")
+            raise Excep.NotFoundAccount("This account isn`t found")
         NameInformation = MyCursor.fetchone() ## Name and Surname 
         CurrentUser = User(NameInformation[0],NameInformation[1],accountInfo[0],accountInfo[1],\
-                           accountInfo[2],accountInfo[3])
+                           accountInfo[2],accountInfo[3],accountInfo[4])
 
         return CurrentUser
 

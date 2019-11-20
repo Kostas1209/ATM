@@ -3,13 +3,14 @@
 class User :
 
     def __init__( self , Name : str, Surname : str, NumberOfAccount : int , \
-		         NumberOfCard : int , Pin : int , AmountOfMoney : int ):
+		         NumberOfCard : int , Pin : int , AmountOfMoney : int , AmountIncorrectPassword : int):
         self.__Name = Name
         self.__Surname =  Surname
         self.__NumberOfCard = NumberOfCard
         self.__NumberOfAccount = NumberOfAccount
         self.__Pin = Pin
         self.__AmountOfMoney = AmountOfMoney
+        self.__AmountIncorrectPassword = AmountIncorrectPassword
 
     def __str__(self):
        return "Пользователь {0} {1} \nТекущая сумма на счету {2}".format(self.__Name,self.__Surname,self.__AmountOfMoney) 
@@ -34,6 +35,13 @@ class User :
     def Pin(self):
         return self.__Pin
     
+    @property
+    def AmountIncorrectPassword(self):
+        return self.__AmountIncorrectPassword
+    @AmountIncorrectPassword.setter
+    def AmountIncorrectPassword(self,value):
+        self.__AmountIncorrectPassword = value
+
     @property
     def AmountOfMoney(self):
         return self.__AmountOfMoney

@@ -1,6 +1,7 @@
 class WrongPassword (Exception):
     pass
 
+
 class NotFoundAccount (Exception):
     pass
 
